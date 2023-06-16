@@ -155,18 +155,18 @@ campsiteRouter.route('/:campsiteId/comments/:commentId')
                 } else if (!campsite) {
                     err = new Error(`campsite ${req.params.campsiteId} not found`);
                     err.status = 404;
-                    return next(err); m
+                    return next(err);
                 } else {
                     err = new Error(`comment ${req.params.commentId} not found`);
                     err.status = 404;
-                    return next(err); m
+                    return next(err);
                 }
             })
             .catch(err => next(err));
     })
     .post((req, res, next) => {
         res.statusCode = 403;
-        res.end(`POST operation not supported on /campsites/${req.parans.campsiteId}/comments/
+        res.end(`POST operation not supported on /campsites/${req.params.campsiteId}/comments/
        ${req.params.commentId}`);
     })
 
@@ -175,7 +175,7 @@ campsiteRouter.route('/:campsiteId/comments/:commentId')
             .then(campsite => {
                 if (campsite && campsite.comments.id(req.params.commentId)) {
                     if (req.body.rating) {
-                        campsite.comments.id(rea.params.commentId).rating = req.body.rating;
+                        campsite.comments.id(req.params.commentId).rating = req.body.rating;
                     }
                     if (req.body.text) {
                         campsite.comments.id(req.params.commentId).text = req.body.text;
@@ -190,11 +190,11 @@ campsiteRouter.route('/:campsiteId/comments/:commentId')
                 } else if (!campsite) {
                     err = new Error(`campsite ${req.params.campsiteId} not found`);
                     err.status = 404;
-                    return next(err); m
+                    return next(err);
                 } else {
                     err = new Error(`comment ${req.params.commentId} not found`);
                     err.status = 404;
-                    return next(err); m
+                    return next(err);
                 }
             })
             .catch(err => next(err));
@@ -215,11 +215,11 @@ campsiteRouter.route('/:campsiteId/comments/:commentId')
                 } else if (!campsite) {
                     err = new Error(`campsite ${req.params.campsiteId} not found`);
                     err.status = 404;
-                    return next(err); m
+                    return next(err);
                 } else {
                     err = new Error(`comment ${req.params.commentId} not found`);
                     err.status = 404;
-                    return next(err); m
+                    return next(err);
                 }
             })
             .catch(err => next(err));
