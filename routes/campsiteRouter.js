@@ -121,7 +121,7 @@ campsiteRouter.route('/:campsiteId/comments')
     })
 
     .delete((req, res, next) => {
-        ampsite.findById(req.params.campsiteId)
+        Campsite.findById(req.params.campsiteId)
             .then(campsite => {
                 if (campsite) {
                     for (let i = (campsite.comments.length - 1); i >= 0; i--) {
@@ -201,7 +201,7 @@ campsiteRouter.route('/:campsiteId/comments/:commentId')
     })
 
     .delete((req, res, next) => {
-        ampsite.findById(req.params.campsiteId)
+        Campsite.findById(req.params.campsiteId)
             .then(campsite => {
                 if (campsite && campsite.comments.id(req.params.commentId)) {
                     campsite.comments.id(req.params.commentId).remove();
