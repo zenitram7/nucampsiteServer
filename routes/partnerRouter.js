@@ -1,19 +1,29 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const Partner = require('../models/partner');
+
 const partnerRouter = express.Router();
 
 partnerRouter.route('/')
-    .all((req, res, next) => {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/plain');
-        next();
+    .get((req, res, next) => {
+        Partner.find()
+            .then(partners => {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(partners);
+            })
+            .catch(err => next(err));
     })
 
-    .get((req, res) => {
-        res.end('Will send all the partners to you');
-    })
-
-    .post((req, res) => {
-        res.end(`Will add the partner: ${req.body.name} with description: ${req.body.description}`);
+    .post((req, res, next) => {
+        Partner.create(req.body)
+            .then(partner => {
+                console.log('Partner created:', partner);
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(partner);
+            })
+            .catch(err => next(err));
     })
 
     .put((req, res) => {
@@ -22,18 +32,30 @@ partnerRouter.route('/')
     })
 
     .delete((req, res) => {
-        res.end('Deleting all partners');
+        Partner.deleteMany()
+            .then(response => {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(response);
+            })
+            .catch(err => next(err));
     });
 
 partnerRouter.route('/:partnerId')
-    .all((req, res, next) => {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/plain');
-        next();
-    })
-
     .get((req, res, next) => {
-        res.end(`Will send details of the partner: ${req.params.partnerId} to you`);
+        Partner.findById(req.params.partnerId)
+            .then(partner => {
+                if (partner) {
+                    res.statusCode = 200;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.json(partner);
+                } else {
+                    const err = new Error(`Partner ${req.params.partnerId} not found`);
+                    err.status = 404;
+                    return next(err);
+                }
+            })
+            .catch(err => next(err))
     })
 
     .post((req, res, next) => {
@@ -42,12 +64,41 @@ partnerRouter.route('/:partnerId')
     })
 
     .put((req, res, next) => {
-        res.write(`Updating the partner: ${req.params.partnerId}\n`);
-        res.end(`Will update the partner: ${req.body.name} with description: ${req.body.description}`);
+        Partner.findByIdAndUpdate(
+            req.params.partnerId,
+            { $set: req.body },
+            { new: true }
+        )
+            .then(partner => {
+                if (partner) {
+                    console.log('Partner updated:', partner);
+                    res.statusCode = 200;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.json(partner);
+                } else {
+                    const err = new Error(`Partner ${req.params.partnerId} not found`);
+                    err.status = 404;
+                    return next(err);
+                }
+            })
+            .catch(err => next(err));
     })
 
     .delete((req, res, next) => {
-        res.end(`Deleting partner: ${req.params.partnerId}`)
+        Partner.findByIdAndUpdate(req.params.partnerId)
+            .then(partner => {
+                if (partner) {
+                    console.log('Partner deleted:', partner);
+                    res.statusCode = 200;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.json(partner);
+                } else {
+                    const err = new Error(`Partner ${req.params.partnerId} not found`);
+                    err.status = 404;
+                    return next(err);
+                }
+            })
+            .catch(err => next(err));
     });
 
 module.exports = partnerRouter;
